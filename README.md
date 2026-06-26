@@ -15,26 +15,34 @@ Stack Exchange is a social media platform that consists of 184 question and answ
 
 
 # Benchmarks
-## Benchmark 1 - Privacy Preservation: Synthetic data generation (or inference) using Llama LLM 
+## Benchmark 1: Privacy Preservation
+### Synthetic data generation (or inference) using Llama LLM 
 For this benchmark, we will create a synthetic dataset from an existing social media dataset. LLMs are particularly well-suited for this task since they generate text that is more coherent and human-like than their predecessors. This is a key feature for creating synthetic social media data since the synthetic data should appear similar in content and structure to the original dataset. The dataset consists of 3.2 million posts by politicians during the 2024 election cycle. For each text sample in the dataset, we generate a synthetic sample for that text using Llama (or Ollama gemma3:4b) models. The creation of synthetic samples for these texts prevents the ability to reverse search for a text, but also makes it easier to reuse or reproduce research from those original materials. Code for this benchmark is available at:
 
-## Benchmark 2 - Statistical Analysis: Understand relationships between variables by training computationally intensive random effects model 
+## Benchmark 2: Statistical Analysis
+### Understand relationships between variables by training computationally intensive random effects model 
 Random effects models, or linear regression models with random effects, are computationally intensive applications of regression that researchers use. We will train a random effects model on the 3.2m social media posts dataset, predicting engagement as a function of party, platform, and post topic. For this regression model, we will add a random effect for the politician, allowing for different intercepts for each politician. This results in around 3k intercepts for the model, resulting in a model that takes longer to fit. Code for this benchmark is available at:
 
-## Benchmark 3 – Statistical Analysis: Identify relationships between variables by training logistic regression model 
+## Benchmark 3: Statistical Analysis: 
+### Identify relationships between variables by training logistic regression model 
 Logistic Regression models are commonly used by social science researchers to understand statistical relationships among variables in a dataset. This benchmark reproduces Hemphill et al.’s (2020a, 2020b) logistic regression model training task. Code for this benchmark is available through Hemphill et al.'s public GitHub repository here: https://github.com/casmlab/modeling-political-attention.git. We use code from the file pathway notebooks/models/create/supervised/1.0-ams-create-best-classifiers.ipynb, specifically code under the 'Make Training and Test Sets' heading until the end of the notebook.
 
-## Benchmark 4 – Statistical Analysis: Infer classifications according to pre-trained logistic regression model 
+## Benchmark 4: Statistical Analysis
+### Infer classifications according to pre-trained logistic regression model 
 Logistic Regression models are commonly used by social science researchers to understand statistical relationships among variables in a dataset. This benchmark reproduces Hemphill et al.’s (2020a, 2020b) logistic regression model inference task. Code for this benchmark is available through Hemphill et al.'s public GitHub repository here: https://github.com/casmlab/modeling-political-attention.git. We use code from the file pathway notebooks/models/run/1.0-ams-label-comparisons.ipynb, specifically code under the 'Label Data with Supervised Model Predictions' heading.
 
-## Benchmark 5 – Topic Modeling: Identify common thematic patterns across datapoints by training LDA model
+## Benchmark 5: Topic Modeling
+### Identify common thematic patterns across datapoints by training LDA model
 LDA topic models are often used by social science researchers to understand thematic patterns across large data corpora. This benchmark reproduces Hemphill et al.’s (2020a, 2020b) LDA model training task.  Code for this task is available through Hemphill et al.'s public GitHub repository here: https://github.com/casmlab/modeling-political-attention.git. We use code from the file pathway notebooks/models/create/unsupervised/1.0-ams-unigram-lda-model-MALLET, specifically code under the section 'Command Line Model Training' heading.
 
-## Benchmark 6 - Topic Modeling: Infer topics in a dataset according to pre-trained LDA model 
+## Benchmark 6: Topic Modeling
+### Infer topics in a dataset according to pre-trained LDA model 
 LDA topic models are often used by social science researchers to understand thematic patterns across large data corpora. This benchmark reproduces Hemphill et al.’s (2020a, 2020b) LDA model inference task. Code for this task is available through Hemphill et al.'s public GitHub repository here: https://github.com/casmlab/modeling-political-attention.git. We use code from the file pathway notebooks/models/create/unsupervised/1.0-ams-unigram-lda-model-MALLET, specifically code under the section 'Command Line Topic Inference' heading.
 
-## Benchmark 7 - Topic Modeling: Identify common thematic patterns across datapoints by training BERTopic model
+## Benchmark 7: Topic Modeling
+### Identify common thematic patterns across datapoints by training BERTopic model
 BERTopic models, like LDA topic models, are a common topic modeling technique among social science researchers. This benchmark performs BERTopic model (Grootendorst, n.d.) training.
 
-## Benchmark 8 - Topic Modeling: Infer topics in a dataset according to pre-trained BERTopic model
+## Benchmark 8: Topic Modeling
+### Infer topics in a dataset according to pre-trained BERTopic model
 BERTopic models, like LDA topic models, are a common topic modeling technique among social science researchers. This benchmark performs BERTopic model (Grootendorst, n.d.) inference.
