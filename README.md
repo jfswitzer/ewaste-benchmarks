@@ -23,7 +23,7 @@ For this benchmark, we will create a synthetic dataset from an existing social m
 ### Understand relationships between variables by training computationally intensive random effects model 
 Random effects models, or linear regression models with random effects, are computationally intensive applications of regression that researchers use. We will train a random effects model on the 3.2m social media posts dataset, predicting engagement as a function of party, platform, and post topic. For this regression model, we will add a random effect for the politician, allowing for different intercepts for each politician. This results in around 3k intercepts for the model, resulting in a model that takes longer to fit. Code for this benchmark is available at:
 
-## Benchmark 3: Statistical Analysis: 
+## Benchmark 3: Statistical Analysis 
 ### Identify relationships between variables by training logistic regression model 
 Logistic Regression models are commonly used by social science researchers to understand statistical relationships among variables in a dataset. This benchmark reproduces Hemphill et al.’s (2020a, 2020b) logistic regression model training task. Code for this benchmark is available through Hemphill et al.'s public GitHub repository here: https://github.com/casmlab/modeling-political-attention.git. We use code from the file pathway notebooks/models/create/supervised/1.0-ams-create-best-classifiers.ipynb, specifically code under the 'Make Training and Test Sets' heading until the end of the notebook.
 
