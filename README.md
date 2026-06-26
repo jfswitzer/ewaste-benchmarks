@@ -15,7 +15,7 @@ Russell et al. collected and labeled 59,826 original tweets (i.e., retweets excl
 
 
 
-
+# Benchmarks
 ## Benchmark 1 - Privacy Preservation: Synthetic data generation (or inference) using Llama LLM 
 For this benchmark, we will create a synthetic dataset from an existing social media dataset. LLMs are particularly well-suited for this task since they generate text that is more coherent and human-like than their predecessors. This is a key feature for creating synthetic social media data since the synthetic data should appear similar in content and structure to the original dataset. The dataset consists of 3.2 million posts by politicians during the 2024 election cycle. For each text sample in the dataset, we generate a synthetic sample for that text using Llama (or Ollama gemma3:4b) models. The creation of synthetic samples for these texts prevents the ability to reverse search for a text, but also makes it easier to reuse or reproduce research from those original materials. Code for this benchmark is available at:
 
