@@ -46,5 +46,5 @@ BERTopic models, like LDA topic models, are a common topic modeling technique am
 
 ## Benchmark 8: Topic Modeling
 ### Infer topics in a dataset according to pre-trained BERTopic model
-BERTopic models, like LDA topic models, are a common topic modeling technique among social science researchers. This benchmark performs BERTopic model (Grootendorst, n.d.) inference. We use **Dataset 3** for this benchmark (see **Dataset 3** above for instructions on access). Code for this benchmark is available in the file '08_infer_bertopic.py' (language: Python). Once the data are downloaded, the code can be run by entering `python 08_synthetic_data.py --input_file [location]` into your command line interface.
+BERTopic models, like LDA topic models, are a common topic modeling technique among social science researchers. This benchmark performs BERTopic model (Grootendorst, n.d.) inference. We use **Dataset 3** for this benchmark (see **Dataset 3** above for instructions on access). Code for this benchmark is available in the file '08_infer_bertopic.py' (language: Python). Once the data are downloaded **and you have run Benchmark 7, saving the .pkl file to the same location as your data file** the code can be run by entering `python 08_synthetic_data.py --input_file [location]` into your command line interface.
 
