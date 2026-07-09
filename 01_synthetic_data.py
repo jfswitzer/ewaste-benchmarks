@@ -1,6 +1,7 @@
+import argparse
 import json
 import math
-import matplotlib.pyplot as plt
+import sys
 import numpy as np
 import pandas as pd
 import requests
@@ -14,6 +15,21 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 device = "cuda" if torch.cuda.is_available() else "cpu"
 sbert = SentenceTransformer("all-MiniLM-L6-v2", device=device)
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Process an input file.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="Example:\n  python main.py input.txt --verbose"
+    )
+
+    parser.add_argument(
+        "input_file",
+        type=Path,
+        help="Path to the input file"
+    )
+
+    return parser.parse_args()
+    
 
 def calculate_perplexity(text):
     """Return perplexity of a given text under the chosen T5/FLAN model.
@@ -146,7 +162,12 @@ def evolve_corpus(text, target_size=100, offspring_per_sample=5, retain_top=20, 
 if __name__ == '__main__':
     all_synth_texts = []
 
-    seed_corpus = ['This is my first sentence', 'This is my second sentence']
+    args = parse_args()
+    input_file = args.input_file
+
+    df = pd.read_csv(input_file)
+    seed_corpus = df.sample(10000, random_state=330)['all_text'].tolist()
+    
     MODEL_NAME = 'gemma3:4b'
 
     for text in tqdm(seed_corpus):
@@ -175,3 +196,4 @@ if __name__ == '__main__':
                 op.write(json.dumps(to_output) + '\n')
                 
         all_synth_texts.extend(synthetic_text)
+
