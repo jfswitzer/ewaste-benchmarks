@@ -19,6 +19,8 @@ Stack Exchange is a social media platform that consists of 184 question and answ
 ### Synthetic data generation (or inference) using Llama LLM 
 For this benchmark, we will create a synthetic dataset from an existing social media dataset. LLMs are particularly well-suited for this task since they generate text that is more coherent and human-like than their predecessors. This is a key feature for creating synthetic social media data since the synthetic data should appear similar in content and structure to the original dataset. The dataset consists of 3.2 million posts by politicians during the 2024 election cycle. For each text sample in the dataset, we generate a synthetic sample for that text using Llama (or Ollama gemma3:4b) models. The creation of synthetic samples for these texts prevents the ability to reverse search for a text, but also makes it easier to reuse or reproduce research from those original materials. Code for this benchmark is available at:
 
+Once the data is downloaded, the code can be run by running `python 01_synthetic_data.py --input_file [location]`
+
 ## Benchmark 2: Statistical Analysis
 ### Understand relationships between variables by training computationally intensive random effects model 
 Random effects models, or linear regression models with random effects, are computationally intensive applications of regression that researchers use. We will train a random effects model on the 3.2m social media posts dataset, predicting engagement as a function of party, platform, and post topic. For this regression model, we will add a random effect for the politician, allowing for different intercepts for each politician. This results in around 3k intercepts for the model, resulting in a model that takes longer to fit. Code for this benchmark is available at:
@@ -43,6 +45,12 @@ LDA topic models are often used by social science researchers to understand them
 ### Identify common thematic patterns across datapoints by training BERTopic model
 BERTopic models, like LDA topic models, are a common topic modeling technique among social science researchers. This benchmark performs BERTopic model (Grootendorst, n.d.) training.
 
+Once the data is downloaded, the code can be run by running `python 07_synthetic_data.py --input_file [location]`
+
+
 ## Benchmark 8: Topic Modeling
 ### Infer topics in a dataset according to pre-trained BERTopic model
 BERTopic models, like LDA topic models, are a common topic modeling technique among social science researchers. This benchmark performs BERTopic model (Grootendorst, n.d.) inference.
+
+Once the data is downloaded, the code can be run by running `python 08_synthetic_data.py --input_file [location]`
+
