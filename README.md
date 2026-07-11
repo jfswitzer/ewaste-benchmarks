@@ -54,11 +54,19 @@ BERTopic models, like LDA topic models, are a common topic modeling technique am
 # References
 
 [1] Hemphill, L., & Schöpke-Gonzalez, A. M. (2020). Two Computational Models for Analyzing Political Attention in Social Media. Proceedings of the International AAAI Conference on Web and Social Media, 14, 260–271. https://www.aaai.org/ojs/index.php/ICWSM/article/view/7297
+
 [2] congress-legislators. (n.d.). Github. Retrieved February 16, 2026, from https://github.com/unitedstates/congress-legislators
+
 [3] Littman, J. (2017). 115th U.s. congress tweet ids [Dataset]. Harvard Dataverse. https://doi.org/10.7910/DVN/UIVHQR
+
 [4] Sunlight Foundation. (n.d.). Legislator Spreadsheet [Dataset]. Retrieved 2019, from https://sunlightlabs.github.io/congress/index.html/#legislator-spreadsheet
+
 [5] Russell, A. (2017). U.S. Senators on Twitter: Asymmetric Party Rhetoric in 140 Characters. American Politics Research, 46(4), 695–723. https://doi.org/10.1177/1532673X17715619
+
 [6] Russell, A. (2018). The politics of prioritization: Senators’ attention in 140 characters. The Forum, 16, 331–356. https://www.degruyter.com/view/journals/for/16/2/article-p331.xml
+
 [7] Jones, B. D., Baumgartner, F. R., Theriault, S. M., Epp, D. A., Lee, C., & Sullivan, M. E. (2023). Policy Agendas Project: Codebook. https://www.comparativeagendas.net/pages/master-codebook
+
 [8] https://github.com/casmlab/modeling-political-attention
+
 [9] https://maartengr.github.io/BERTopic/index.html
