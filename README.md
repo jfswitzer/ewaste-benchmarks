@@ -35,7 +35,7 @@ Logistic Regression models are commonly used by social science researchers to un
 
 ## Benchmark 5: Topic Modeling
 ### Identify common thematic patterns across datapoints by training LDA model
-LDA topic models are often used by social science researchers to understand thematic patterns across large text corpora. This benchmark reproduces Hemphill et al.’s [1, 8] LDA model training task. Code for this task is available through Hemphill et al.'s public GitHub repository here: https://github.com/casmlab/modeling-political-attention.git. We use code from the file pathway notebooks/models/create/unsupervised/1.0-ams-unigram-lda-model-MALLET.ipynb (language: bash) under the section 'Command Line Model Training' heading.
+Latent Dirichelet Allocation (LDA) topic models are often used by social science researchers to understand thematic patterns across large text corpora. This benchmark reproduces Hemphill et al.’s [1, 8] LDA model training task. Code for this task is available through Hemphill et al.'s public GitHub repository here: https://github.com/casmlab/modeling-political-attention.git. We use code from the file pathway notebooks/models/create/unsupervised/1.0-ams-unigram-lda-model-MALLET.ipynb (language: bash) under the section 'Command Line Model Training' heading.
 
 ## Benchmark 6: Topic Modeling
 ### Infer topics in a dataset according to pre-trained LDA model 
