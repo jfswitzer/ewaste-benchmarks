@@ -7,3 +7,14 @@ joblib>=1.3.0
 xmltodict>=0.13.0
 numpy>=1.24.0,<2.0.0
 torch>=2.0.0
+stop_words-2025.11.4
+nltk
+gensim
+smart-open
+pyLDAvis
+matplotlib
+cufflinks
+aiohttp>=3.9.0
+pandas>=2.0.0
+requests>=2.31.0
+tqdm>=4.66.0
