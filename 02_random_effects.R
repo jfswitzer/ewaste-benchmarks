@@ -1,11 +1,17 @@
-'''
-MB Note: We still need to throw a random effect in there for office holder, but 
-the nuts and bolts of the regression are here. 
-'''
+# Benchmark libraries
 library(broom)
 library(dplyr)
 library(ggplot2)
 library(scales)
+library(data.table)
+library(furrr)
+library(tictoc)
+
+# Setup multi-core parallel execution across available CPU cores
+plan(multisession, workers = availableCores())
+
+# Ensure output directory exists to prevent ggsave errors
+dir.create("figures", showWarnings = FALSE)
 
 topics <- c("crt_dei", "abortion", "cancel_culture", "court",  "environ", 
             "guns", "health", "imm", "lgbt", "police", "socialism")
@@ -17,96 +23,68 @@ issue_groups <- list(
   policy       = c("imm", "health", "court", "environ", "police")
 )
 
+tic("Total Execution Pipeline")
 
+# 1. High-Performance Data Ingestion & Cleaning
+tic("Data Ingestion & Cleaning")
+df <- fread('all_posts_w_topic_and_candidate.csv')
 
-# read in data
-df <- read.csv('all_posts_w_topic_and_candidate.csv')
+# Light cleaning
+df <- df[!is.na(likes) & Office.Name %in% c("U.S. Representative", "U.S. Senator")]
 
-# do some light cleaning
-df <- df[!is.na(df$likes),]
-df <- df[df$Office.Name == "U.S. Representative" | df$Office.Name == 'U.S. Senator',]
-
-# renaming 
-df$platform <- recode(df$platform,
-                      "facebook" = "Facebook",
-                      "twitter" = "Twitter",
-                      "instagram" = "Instagram",
-                      "rumble" = "Rumble",
-                      "t" = "Telegram",
-                      "threads" = "Threads",
-                      "tiktok" = "TikTok",
-                      "truthsocial" = "Truth Social",
-                      "youtube" = "YouTube",
-                      "gettr" = "Gettr"
+# Renaming platforms
+platform_map <- c(
+  "facebook" = "Facebook", "twitter" = "Twitter", "instagram" = "Instagram",
+  "rumble" = "Rumble", "t" = "Telegram", "threads" = "Threads",
+  "tiktok" = "TikTok", "truthsocial" = "Truth Social", "youtube" = "YouTube", 
+  "gettr" = "Gettr"
 )
+df[, platform := recode(platform, !!!platform_map)]
 
+# Fast vectorized row checks
+df[, policy := as.integer(rowSums(.SD == 1, na.rm = TRUE) > 0), .SDcols = issue_groups$policy]
+df[, hybrid := as.integer(rowSums(.SD == 1, na.rm = TRUE) > 0), .SDcols = issue_groups$hybrid]
+df[, culture_wars := as.integer(rowSums(.SD == 1, na.rm = TRUE) > 0), .SDcols = issue_groups$culture_wars]
 
+df[, issue_group := case_when(
+  culture_wars == 1 ~ "culture wars",
+  hybrid       == 1 ~ "hybrid",
+  policy       == 1 ~ "policy issue",
+  TRUE              ~ NA_character_
+)]
 
+df[, issue_group := factor(issue_group, levels = c("policy issue", "hybrid", "culture wars"))]
 
-df <- df %>% mutate(policy = if_any(all_of(issue_groups$policy), ~ . == 1) * 1L)
-df <- df %>% mutate(hybrid = if_any(all_of(issue_groups$hybrid), ~ . == 1) * 1L)
-df <- df %>% mutate(culture_wars = if_any(all_of(issue_groups$culture_wars), ~ . == 1) * 1L)
+# Calculate values
+df[, loglikes := log(likes + 2)]
+df[, totalengagement := likes + shares]
+df[, logtotal := log(totalengagement + 2)]
+toc()
 
-df <- df %>%
-  mutate(
-    issue_group = case_when(
-      culture_wars == 1 ~ "culture wars",
-      hybrid       == 1 ~ "hybrid",
-      policy       == 1 ~ "policy issue",
-      TRUE ~ NA_character_
-    )
-  )
+# 2. Parallel Model Fitting Across Cores
+tic("Parallel Linear Regressions")
 
-df <- df %>%
-  mutate(
-    issue_group = factor(
-      issue_group,
-      levels = c("policy issue", "hybrid", "culture wars")
-    )
-  )
+# Parallel group-by regression to test multi-core CPU throughput
+all_results <- df %>%
+  filter(!is.na(issue_group) & !is.na(Party.Standardized)) %>%
+  group_by(Office.Name, Party.Standardized, platform) %>%
+  filter(n() > 0) %>%
+  nest() %>%
+  future_pmap_dfr(function(Office.Name, Party.Standardized, platform, data) {
+    result <- lm(loglikes ~ issue_group, data = data)
+    
+    tidy_result <- tidy(result) %>%
+      mutate(
+        platform = platform,
+        party = Party.Standardized, # Fixed: Mapped from Party.Standardized correctly
+        office = Office.Name
+      )
+    return(tidy_result)
+  })
 
-# calculate values
-df$loglikes = log(df$likes + 2)
-df$totalengagement = df$likes + df$shares 
-df$logtotal <- log(df$totalengagement + 2)
+toc()
 
-
-platform_results <- list()
-
-
-for (office in unique(df$Office.Name)){
-  print(office)
-  for (party in unique(df$Party.Standardized)){
-    print(party)
-    for (platform in unique(df$platform)){
-      print(platform)
-      platformdf <- df[df$platform == platform & df$Party.ID == party & df$Office.Name == office,]
-      
-      if (nrow(platformdf) > 0){
-        result <- lm(loglikes ~ issue_group,
-                     data=platformdf
-        )
-        
-        # Store tidy coefficients with platform name
-        tidy_result <- tidy(result) %>%
-          mutate(platform = platform)
-        
-        tidy_result$party <- party
-        tidy_result$office <- office
-        
-        platform_results[[paste0(platform, party, office)]] <- tidy_result
-        
-      }
-      
-    }
-  }
-}
-
-
-
-
-all_results <- bind_rows(platform_results)
-
+# 3. Post-Processing Coefficients
 topic_results <- all_results %>%
   filter(term %in% c("issue_grouphybrid", "issue_groupculture wars"))
 
@@ -117,25 +95,29 @@ topic_results <- topic_results %>%
     conf.high_likes  = exp(estimate + 1.96 * std.error) - 1
   )
 
-
-
-# renaming 
-topic_results$term <- recode(topic_results$term,
-                             "issue_grouphybrid" = "Hybrid",
-                             "issue_groupculture wars" = "Culture Wars"
+# Renaming
+topic_results$term <- recode(
+  topic_results$term,
+  "issue_grouphybrid" = "Hybrid",
+  "issue_groupculture wars" = "Culture Wars"
 )
 
 topic_results$group <- ifelse(topic_results$platform %in% mainstream, "Mainstream", "Alt-tech")
 topic_results$platform <- factor(topic_results$platform, levels = c(mainstream, alttech))
 
-senate <- topic_results[topic_results$office == "U.S. Senator",]
+# 4. Figure Generation (Original Logic Preserved)
+tic("Plot Rendering & File Output")
+
+# Senate Plot
+senate <- topic_results[topic_results$office == "U.S. Senator", ]
 
 ggplot(senate, aes(x = platform, y = estimate_likes, color = term)) +
   geom_point(position = position_dodge(width = 0.6), size = 2) +
-  geom_errorbar(aes(ymin = conf.low_likes,
-                    ymax = conf.high_likes),
-                width = 0.2,
-                position = position_dodge(width = 0.6)) +
+  geom_errorbar(
+    aes(ymin = conf.low_likes, ymax = conf.high_likes),
+    width = 0.2,
+    position = position_dodge(width = 0.6)
+  ) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
   coord_flip() +
   theme_minimal() +
@@ -149,21 +131,20 @@ ggplot(senate, aes(x = platform, y = estimate_likes, color = term)) +
 
 ggsave("figures/senate_topic_engagement_preds.pdf")
 
-house <- topic_results[topic_results$office == "U.S. Representative",]
+# House Plot
+house <- topic_results[topic_results$office == "U.S. Representative", ]
 
 ggplot(house, aes(x = platform, y = estimate, color = term)) +
   geom_point(position = position_dodge(width = 0.6), size = 2) +
-  geom_errorbar(aes(ymin = estimate - 1.96 * std.error,
-                    ymax = estimate + 1.96 * std.error),
-                width = 0.2,
-                position = position_dodge(width = 0.6)) +
+  geom_errorbar(
+    aes(ymin = estimate - 1.96 * std.error, ymax = estimate + 1.96 * std.error),
+    width = 0.2,
+    position = position_dodge(width = 0.6)
+  ) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
   coord_flip() +
   theme_minimal() +
-
-  # facet only by party
   facet_wrap(~ party, scales = "fixed") +
-  
   labs(
     title = "Topic Effects on Log Likes (House)",
     x = "Topic",
@@ -172,3 +153,6 @@ ggplot(house, aes(x = platform, y = estimate, color = term)) +
   )
 
 ggsave("figures/house_topic_engagement_preds.pdf")
+
+toc() # End plot timing
+toc() # End total execution timing
