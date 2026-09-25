@@ -67,11 +67,6 @@ if __name__ == '__main__':
     # --- Slice to subset if --limit is specified ---
     if args.limit and args.limit > 0:
         documents = documents[:args.limit]
-
-    t1_data = time.perf_counter()
-    
-    num_docs = len(documents)
-    print(f"Loaded {num_docs:,} documents for benchmarking in {t1_data - t0_data:.2f} seconds.")
     
     t1_data = time.perf_counter()
     

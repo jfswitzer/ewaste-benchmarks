@@ -1,3 +1,5 @@
-python 07_fit_bertopic_benchmarked.py data/astronomy/Comments.xml -n <Number of docs (optional)>"
+python 07_fit_bertopic_benchmarked.py data/astronomy/Comments.xml -n=<Number of docs (optional)>
+
+python 08_infer_bertopic_benchmarked.py data/astronomy/Comments.xml -n=<Number of docs (optional)>
 
 
